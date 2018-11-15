@@ -128,7 +128,8 @@
           console.log( "$.post() success" );
         })
         .fail(function() {
-          console.log( "$.post() error" );
+          $("#top-date").html("Loading... ERROR!")
+          $("#top-div").html("Loading... ERROR!")
         })
       })
     </script>
