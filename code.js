@@ -21,6 +21,15 @@ function stop_all_audios() {
 }
 
 
+function format_date(datestr) {
+    return datestr.slice(0,4) + "/" + datestr.slice(4,6) + "/" + datestr.slice(6,8)
+}
+
+
+function format_time(timestr) {
+    return timestr.slice(0,2) + ":" + timestr.slice(2,4)
+}
+
 function render_page(data) {
     var files = data.files
     var dates = data.dates
@@ -48,9 +57,9 @@ function render_page(data) {
         var td_index = $('<td></td>').text(i).appendTo(row)
 
         var td_date = $('<td></td>').appendTo(row);
-        $('<label></label>').text(file.date).prop({id:file.date}).appendTo(td_date)
+        $('<label></label>').text(format_date(file.date)).prop({id:file.date}).appendTo(td_date)
 
-        var td_time = $('<td></td>').text(file.time).appendTo(row);
+        var td_time = $('<td></td>').text(format_time(file.time)).appendTo(row);
 
         var td_seq = $('<td></td>').prop({align:"right"}).appendTo(row);
 
