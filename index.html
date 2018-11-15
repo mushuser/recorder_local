@@ -3,22 +3,45 @@
   <head>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
     </script>
+    <script src="./secret.js"></script>
 
     <script>
       function render_page(files) {
         var tbl = $('<table></table>').attr({id: "top-table", border:1});
+
         $("#top-div").html(tbl)
 
           for(var i in files) {
             var file = files[i]
-              var row = $('<tr></tr>').appendTo($("#top-table"));
-            var td_filename = $('<td></td>').appendTo(row);
+            var row = $('<tr></tr>').appendTo($("#top-table"));
 
-            var href_filename = $('<a></a>').text(file.filename).prop({href: file.url, target: "_blank"}).appendTo(td_filename)
-              $('<td></td>').text(file.size).appendTo(row);
+            var td_filename = $('<td></td>').appendTo(row);
+            var href_filename = $('<a></a>').
+              text(file.filename).
+              prop({href: file.url, target: "_blank"}).
+              appendTo(td_filename)
+
+            var td_audio = $('<td></td>').appendTo(row);
+            var audio = $('<audio preload="none"></audio>').
+              prop({id:"player_"+file.id, src:file.download_url}).
+              appendTo(td_audio)
+
+            var ahref = $('<a>&gt;</a>').
+              prop({href:"#", id:file.id, style:"text-decoration: none"}).
+              on('click', function(obj) {
+                var id = "player_" + obj.target.id
+                document.getElementById(id).play()
+              }
+            )
+
+            ahref.appendTo(td_audio)
+
+            $('<td></td>').text(file.size).appendTo(row);
 
             var td_starred = $('<td></td>').appendTo(row);    
-            $('<input type="checkbox"/>').prop({checked: file.starred, id: file.id}).appendTo(td_starred);
+            $('<input type="checkbox"/>').
+              prop({checked: file.starred, id: file.id}).
+              appendTo(td_starred);
 
             $('<td></td>').text(file.desc).appendTo(row);    
           }
@@ -28,19 +51,17 @@
             google.script.run.set_starred(cb.id, cb.checked)
         });   
       }
+
       $(function() {
-        var jqxhr = $.post( "https://script.google.com/macros/s/AKfycbyQZraBEh4TDdNkqr3ydlQzxw9TzHs1pyxy5Sw-CMuZytl-Nb0p/exec", function(files) {
+        var jqxhr = $.post(exec_url, function(files) {
           render_page(files)
         })
         .done(function() {
-          console.log( "second success" );
+          console.log( "$.post() success" );
         })
         .fail(function() {
-          console.log( "error" );
+          console.log( "$.post() error" );
         })
-        .always(function() {
-          console.log( "finished" );
-        });
       })
     </script>
   </head>
