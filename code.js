@@ -43,14 +43,16 @@ function render_page(data) {
     for(var i in files) {
         var file = files[i]
 
-        var row = $('<tr></tr>').appendTo($("#top-table"));
+        var row = $('<tr></tr>').prop({align:"right"}).appendTo($("#top-table"));
+
+        var td_index = $('<td></td>').text(i).appendTo(row)
 
         var td_date = $('<td></td>').appendTo(row);
         $('<label></label>').text(file.date).prop({id:file.date}).appendTo(td_date)
 
         var td_time = $('<td></td>').text(file.time).appendTo(row);
 
-        var td_seq = $('<td></td>').appendTo(row);
+        var td_seq = $('<td></td>').prop({align:"right"}).appendTo(row);
 
         var href_seq = $('<a></a>').
             text(file.seq).
@@ -85,7 +87,7 @@ function render_page(data) {
             prop({checked: file.starred, id: file.id}).
             appendTo(td_starred);
 
-        $('<td></td>').text(file.desc).appendTo(row);    
+        $('<td></td>').prop({align:"left"}).text(file.desc).appendTo(row);    
     }
 
     $(':checkbox').change(function () {
