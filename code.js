@@ -27,30 +27,12 @@ function render_page(data) {
 
     $("#top-date").html("")
 
-    var href_all = $('<a></a>').
-        text("[ALL] ").
-        prop({href: "#"}).
-        on('click', function(e) {
-        e.preventDefault()
-        $.post(exec_url, function(data) {
-            render_page(data)
-        })
-    })
-
-    href_all.appendTo($("#top-date"))
-
     for(var i in dates) {
         var date = dates[i]
         var href_date = $('<a></a>').
             text("["+date+"] ").
-            prop({href: "#", date: date}).
-            on('click', function(e) {
-            e.preventDefault()
-            var input = {action:"get", date: e.target.date}
-            $.post(exec_url, input, function(data) {
-                render_page(data)
-            })
-        })
+            prop({href: "#"+date, date: date})
+
         href_date.appendTo($("#top-date"))
     }
 
@@ -64,18 +46,7 @@ function render_page(data) {
         var row = $('<tr></tr>').appendTo($("#top-table"));
 
         var td_date = $('<td></td>').appendTo(row);
-
-        var href_date = $('<a></a>').
-            text(file.date).
-            prop({href: "#", date: file.date}).
-            on('click', function(e) {
-                e.preventDefault()
-                var input = {action:"get", date: e.target.date}
-                    $.post(exec_url, input, function(data) {
-                    render_page(data)
-                })
-            }).
-            appendTo(td_date)
+        $('<label></label>').text(file.date).prop({id:file.date}).appendTo(td_date)
 
         var td_time = $('<td></td>').text(file.time).appendTo(row);
 
@@ -102,7 +73,7 @@ function render_page(data) {
 
             stop_all_audios()
             audio_control.play()
-        }).
+            }).
             appendTo(td_audio)
 
 
