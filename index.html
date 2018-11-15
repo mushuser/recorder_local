@@ -12,6 +12,16 @@
         
         $("#top-date").html("")
 
+        var href_all = $('<a></a>').
+          text("[ALL] ").
+          prop({href: "#", style:"text-decoration: none"}).
+          on('click', function() {
+            $.post(exec_url, function(data) {
+              render_page(data)
+          })
+        })
+        href_all.appendTo($("#top-date"))
+
         for(var i in dates) {
           var date = dates[i]
           var href_date = $('<a></a>').
