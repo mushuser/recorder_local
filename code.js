@@ -1,3 +1,26 @@
+function check_audios_paused() {
+    var audios = document.getElementsByTagName("audio")
+    for(var i in audios) {
+        if(audios[i].paused == false) {
+            return false
+        }
+    }
+
+    return true
+}
+
+
+function stop_all_audios() {
+    var audios = document.getElementsByTagName("audio")
+    for(var i in audios) {
+        if(audios[i].paused == false) {
+            audios[i].pause()
+            audios[i].currentTime = 0
+        }
+    }
+}
+
+
 function render_page(data) {
     var files = data.files
     var dates = data.dates
@@ -7,9 +30,10 @@ function render_page(data) {
     var href_all = $('<a></a>').
         text("[ALL] ").
         prop({href: "#"}).
-        on('click', function() {
-            $.post(exec_url, function(data) {
-                render_page(data)
+        on('click', function(e) {
+        e.preventDefault()
+        $.post(exec_url, function(data) {
+            render_page(data)
         })
     })
 
@@ -18,10 +42,11 @@ function render_page(data) {
     for(var i in dates) {
         var date = dates[i]
         var href_date = $('<a></a>').
-        text("["+date+"] ").
-        prop({href: "#", date: date}).
-        on('click', function(obj) {
-            var input = {action:"get", date: obj.target.date}
+            text("["+date+"] ").
+            prop({href: "#", date: date}).
+            on('click', function(e) {
+            e.preventDefault()
+            var input = {action:"get", date: e.target.date}
             $.post(exec_url, input, function(data) {
                 render_page(data)
             })
@@ -41,38 +66,44 @@ function render_page(data) {
         var td_date = $('<td></td>').appendTo(row);
 
         var href_date = $('<a></a>').
-        text(file.date).
-        prop({href: "#", date: file.date}).
-        on('click', function(obj) {
-            var input = {action:"get", date: obj.target.date}
-            $.post(exec_url, input, function(data) {
-                render_page(data)
-            })
-        }).
-        appendTo(td_date)
+            text(file.date).
+            prop({href: "#", date: file.date}).
+            on('click', function(e) {
+                e.preventDefault()
+                var input = {action:"get", date: e.target.date}
+                    $.post(exec_url, input, function(data) {
+                    render_page(data)
+                })
+            }).
+            appendTo(td_date)
 
         var td_time = $('<td></td>').text(file.time).appendTo(row);
 
         var td_seq = $('<td></td>').appendTo(row);
 
         var href_seq = $('<a></a>').
-        text(file.seq).
-        prop({href: file.url, target: "_blank"}).
-        appendTo(td_seq)
+            text(file.seq).
+            prop({href: file.url, target: "_blank"}).
+            appendTo(td_seq)
 
         var td_audio = $('<td></td>').appendTo(row);
 
         var audio = $('<audio preload="none"></audio>').
-        prop({id:"player_"+file.id, src:file.download_url}).
-        appendTo(td_audio)
+            prop({id:"player_"+file.id, src:file.download_url}).
+            appendTo(td_audio)
 
         var href_play = $('<a> ▶ </a>').
-        prop({href:"#", id:file.id}).
-        on('click', function(obj) {
-            var id = "player_" + obj.target.id
-                document.getElementById(id).play()
+            prop({href:"#", id:file.id}).
+            on('click', function(e) {
+            e.preventDefault()
+
+            var id = "player_" + e.target.id
+            var audio_control = document.getElementById(id)
+
+            stop_all_audios()
+            audio_control.play()
         }).
-        appendTo(td_audio)
+            appendTo(td_audio)
 
 
         $('<td></td>').text(file.size).appendTo(row);
@@ -80,8 +111,8 @@ function render_page(data) {
         var td_starred = $('<td></td>').appendTo(row);    
 
         $('<input type="checkbox"/>').
-        prop({checked: file.starred, id: file.id}).
-        appendTo(td_starred);
+            prop({checked: file.starred, id: file.id}).
+            appendTo(td_starred);
 
         $('<td></td>').text(file.desc).appendTo(row);    
     }
