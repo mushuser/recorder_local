@@ -1,6 +1,17 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <style>
+      a {
+        text-decoration: none;
+      }
+      a:link, a:visited {
+        color: blue;
+      }
+      a:hover {
+        color: red;
+      } 
+    </style>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
     </script>
     <script src="./secret.js"></script>
@@ -14,7 +25,7 @@
 
         var href_all = $('<a></a>').
           text("[ALL] ").
-          prop({href: "#", style:"text-decoration: none"}).
+          prop({href: "#"}).
           on('click', function() {
             $.post(exec_url, function(data) {
               render_page(data)
@@ -26,7 +37,7 @@
           var date = dates[i]
           var href_date = $('<a></a>').
             text("["+date+"] ").
-            prop({href: "#", date: date, style:"text-decoration: none"}).
+            prop({href: "#", date: date}).
             on('click', function(obj) {
               var input = {action:"get", date: obj.target.date}
               $.post(exec_url, input, function(data) {
@@ -42,47 +53,50 @@
 
           for(var i in files) {
             var file = files[i]
+
             var row = $('<tr></tr>').appendTo($("#top-table"));
             
             var td_date = $('<td></td>').appendTo(row);
+
             var href_date = $('<a></a>').
               text(file.date).
-              prop({href: "#", date: file.date, style:"text-decoration: none"}).
+              prop({href: "#", date: file.date}).
               on('click', function(obj) {
                 var input = {action:"get", date: obj.target.date}
                 $.post(exec_url, input, function(data) {
                   render_page(data)
                 })
-              })
-
-            href_date.appendTo(td_date)
+              }).
+              appendTo(td_date)
 
             var td_time = $('<td></td>').text(file.time).appendTo(row);
             
             var td_seq = $('<td></td>').appendTo(row);
 
-            var href_filename = $('<a></a>').
+            var href_seq = $('<a></a>').
               text(file.seq).
-              prop({href: file.url, target: "_blank", style:"text-decoration: none"}).
+              prop({href: file.url, target: "_blank"}).
               appendTo(td_seq)
 
             var td_audio = $('<td></td>').appendTo(row);
+
             var audio = $('<audio preload="none"></audio>').
               prop({id:"player_"+file.id, src:file.download_url}).
               appendTo(td_audio)
 
-            var ahref = $('<a> ▶ </a>').
-              prop({href:"#", id:file.id, style:"text-decoration: none"}).
+            var href_play = $('<a> ▶ </a>').
+              prop({href:"#", id:file.id}).
               on('click', function(obj) {
                 var id = "player_" + obj.target.id
                 document.getElementById(id).play()
-              })
+              }).
+              appendTo(td_audio)
 
-            ahref.appendTo(td_audio)
 
             $('<td></td>').text(file.size).appendTo(row);
 
             var td_starred = $('<td></td>').appendTo(row);    
+
             $('<input type="checkbox"/>').
               prop({checked: file.starred, id: file.id}).
               appendTo(td_starred);
