@@ -6,7 +6,26 @@
     <script src="./secret.js"></script>
 
     <script>
-      function render_page(files) {
+      function render_page(data) {
+        var files = data.files
+        var dates = data.dates
+        
+        $("#top-date").html("")
+
+        for(var i in dates) {
+          var date = dates[i]
+          var href_date = $('<a></a>').
+            text("["+date+"] ").
+            prop({href: "#", date: date, style:"text-decoration: none"}).
+            on('click', function(obj) {
+              var input = {action:"get", date: obj.target.date}
+              $.post(exec_url, input, function(data) {
+                render_page(data)
+            })
+          })
+          href_date.appendTo($("#top-date"))
+        }
+
         var tbl = $('<table></table>').attr({id: "top-table", border:1});
 
         $("#top-div").html(tbl)
@@ -14,25 +33,40 @@
           for(var i in files) {
             var file = files[i]
             var row = $('<tr></tr>').appendTo($("#top-table"));
+            
+            var td_date = $('<td></td>').appendTo(row);
+            var href_date = $('<a></a>').
+              text(file.date).
+              prop({href: "#", date: file.date, style:"text-decoration: none"}).
+              on('click', function(obj) {
+                var input = {action:"get", date: obj.target.date}
+                $.post(exec_url, input, function(data) {
+                  render_page(data)
+                })
+              })
 
-            var td_filename = $('<td></td>').appendTo(row);
+            href_date.appendTo(td_date)
+
+            var td_time = $('<td></td>').text(file.time).appendTo(row);
+            
+            var td_seq = $('<td></td>').appendTo(row);
+
             var href_filename = $('<a></a>').
-              text(file.filename).
-              prop({href: file.url, target: "_blank"}).
-              appendTo(td_filename)
+              text(file.seq).
+              prop({href: file.url, target: "_blank", style:"text-decoration: none"}).
+              appendTo(td_seq)
 
             var td_audio = $('<td></td>').appendTo(row);
             var audio = $('<audio preload="none"></audio>').
               prop({id:"player_"+file.id, src:file.download_url}).
               appendTo(td_audio)
 
-            var ahref = $('<a>&gt;</a>').
+            var ahref = $('<a> ▶ </a>').
               prop({href:"#", id:file.id, style:"text-decoration: none"}).
               on('click', function(obj) {
                 var id = "player_" + obj.target.id
                 document.getElementById(id).play()
-              }
-            )
+              })
 
             ahref.appendTo(td_audio)
 
@@ -76,6 +110,8 @@
     </script>
   </head>
   <body>
+    <div id="top-date">Loading...</div>
+    <hr>
     <div id="top-div">Loading...</div>
   </body>
 </html>
