@@ -65,16 +65,23 @@ function render_page(data) {
             prop({id:"player_"+file.id, src:file.download_url}).
             appendTo(td_audio)
 
-        var href_play = $('<a> ▶ </a>').
-            prop({href:"#", id:file.id}).
+        var char_playing = ' ▶ '
+
+        var href_play = $('<a>' + char_playing + '</a>').
+            prop({href:"#", id:file.id, style:"font-size: 30px"}).
             on('click', function(e) {
-            e.preventDefault()
+                e.preventDefault()
 
-            var id = "player_" + e.target.id
-            var audio_control = document.getElementById(id)
+                var id = "player_" + e.target.id
+                var audio_control = document.getElementById(id)
 
-            stop_all_audios()
-            audio_control.play()
+                if(audio_control.paused == false) {
+                    audio_control.pause()
+                    audio_control.currentTime = 0
+                } else {
+                    stop_all_audios()
+                    audio_control.play()
+                }
             }).
             appendTo(td_audio)
 
